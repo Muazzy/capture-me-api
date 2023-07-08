@@ -2,7 +2,7 @@ const fs = require('fs')
 
 function prepareDir(path) {
     return new Promise((resolve, reject) => {
-        // if (fs.existsSync(path)) return resolve(true)
+        if (fs.existsSync(path)) return resolve(true) //if the path already exists
 
         fs.mkdir(path, (err) => {
             if (err) {

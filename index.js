@@ -10,11 +10,11 @@ const app = express()
 
 
 const PORT = process.env.PORT || 3069
-const ssPath = 'screenshots'
+const ssDir = 'screenshots'
 
 app.use(express.json()) //using json middleware to parse the body of the post request
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static(ssPath)) //we can directly access the files of the screenshot path using this : ourbaseapipath/filename (note the file should be in the )
+app.use(express.static(ssDir)) //we can directly access the files of the screenshot path using this : ourbaseapipath/filename (note the file should be in the )
 
 
 app.post('/api/captureme', async (req, res) => {
@@ -26,14 +26,20 @@ app.post('/api/captureme', async (req, res) => {
     if (!isValidUrl) return res.status(400).send('invalid url')
 
     //CHECK IF THE DIR IS PREPARED, IF ITS NOT, RETURN A SERVER ERROR
-    const isDirReady = await prepareDir(ssPath).catch((e) => { return false }) //on success the function returns true by default
+    const isDirReady = await prepareDir(ssDir).catch((e) => { return false }) //on success the function returns true by default
     if (!isDirReady) return res.status(500).send('Something unexpected happened on the server')
 
-    console.log('isDirReady', isDirReady)
+    //FINALLY RUN THE CAPTUREME FUNCTION 
+    let resultSsPath = ''
+    try {
+        resultSsPath = await captureMe(url, ssDir, { fullPage: true })
+        const baseUrl = getBaseUrl(req.protocol, req.headers.host)
 
-    const baseUrl = getBaseUrl(req.protocol, req.headers.host)
-    // captureSS(url)
-    res.send(`${baseUrl}hello.png`)
+        return res.send(`${baseUrl}${resultSsPath}`)
+    } catch (e) {
+        console.log(e)
+        return res.status(500).send('Something unexpected happened on the server')
+    }
 })
 
 
