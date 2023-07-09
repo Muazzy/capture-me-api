@@ -3,6 +3,9 @@ const prepareDir = require('./prepare_dir')
 const getBaseUrl = require('./get_base_url')
 const validateUrl = require('./validate_url')
 const captureMe = require('./capture_me')
+const cleanTemporaryFiles = require('./clean_temporary_files')
+
+
 
 require("dotenv").config()
 
@@ -42,18 +45,11 @@ app.post('/api/captureme', async (req, res) => {
     }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
+//will be running this every hour
+//1 => hour => 60 => mins => 60 => seconds => 1000 (miliseconds)
+setInterval(() => {
+    cleanTemporaryFiles(ssDir)
+}, 1 * 60 * 60 * 1000)
 
 
 app.listen(PORT, () => { console.log(`litsening to port ${PORT}`) })
