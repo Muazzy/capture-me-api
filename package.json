@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
   "author": "Meer M. Muazzam",
   "license": "ISC",
   "dependencies": {
