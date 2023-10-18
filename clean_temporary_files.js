@@ -11,7 +11,7 @@ const isLessThen10mins = (fileCreationTime) => {
 
     const differenceInMinutes = Math.floor((currentTime.getTime() - fileCreationTime.getTime()) / miliseconds / senconds)
 
-    return differenceInMinutes < minutesToCompareTo
+    return differenceInMinutes > minutesToCompareTo
 }
 
 const cleanTemporaryFiles = (dir) => fs.readdir(dir, (e, files) => {
