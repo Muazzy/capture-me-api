@@ -1,5 +1,4 @@
 const puppeteer = require('puppeteer')
-const getNewFilePath = require('./get_new_file_path')
 
 const puppeteerLaunchArgs = {
     defaultViewport: null,
@@ -15,14 +14,14 @@ const puppeteerLaunchArgs = {
             ? process.env.PUPPETEER_EXECUTABLE_PATH
             : puppeteer.executablePath(),
     headless: true
-
 }
 
 const iphone = puppeteer.KnownDevices['iPhone X']
 const android = puppeteer.KnownDevices['Pixel 4a (5G)']
 
-async function captureMe(params, dirPath) {
+async function screenshot(req, res, next) {
     try {
+        const params = req.body
         const browser = await puppeteer.launch(puppeteerLaunchArgs)
         const page = await browser.newPage()
 
@@ -39,17 +38,20 @@ async function captureMe(params, dirPath) {
         page.setDefaultTimeout(0)
 
         await page.goto(params.url)
-
         await page.waitForNetworkIdle()
-        const newImagePath = getNewFilePath(dirPath)
-        await page.screenshot({ path: newImagePath, type: 'png', fullPage: params.fullPage ?? true })
+
+        const imageBuffer = await page.screenshot({ type: 'png', fullPage: params.fullPage ?? true })
+
         await browser.close()
-        return newImagePath.split('/')[1] // (the getNewFilePath() returns a string like this: 'dir/filenamexx123', we have used split & used the later part [1] cuz we are only intrested in the file name)
+
+        req.imageBuffer = imageBuffer
+        next()
     } catch (e) {
+        console.log('error in screenshot')
         console.log(e)
-        throw e //rethrow for the post request to handle
+        return res.status(500).send('server error')
     }
 }
 
 
-module.exports = captureMe
+module.exports = screenshot

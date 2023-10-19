@@ -12,10 +12,9 @@ function validateParams(params) {
     })
     const { error } = schema.validate(params)
 
-    if (error) return error//will only return error. if the schema is valid then null
+    if (error) return error
 
     return
 }
-
 
 module.exports = validateParams
