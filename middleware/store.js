@@ -1,8 +1,9 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
+const getUniqueFileName = require('../utils/unique_filename')
 
 async function storeScreenshot(req, res, next) {
     try {
-        const newFileName = req.newFileName
+        const newFileName = getUniqueFileName()
         const screenshotPath = process.env.SCREENSHOTS_PATH_ID
         const S3 = new S3Client({
             region: 'auto',
@@ -25,7 +26,6 @@ async function storeScreenshot(req, res, next) {
         const encodedSlash = encodeURIComponent('/')
 
         req.ssUrl = `${process.env.PUBLIC_ACCESS_ENDPOINT}/${screenshotPath}${encodedSlash}${newFileName}`
-
         console.log(req.ssUrl)
 
         next()

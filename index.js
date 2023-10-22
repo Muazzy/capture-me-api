@@ -5,14 +5,11 @@ const app = express()
 
 //ROUTES
 const captureme_routes = require('./routes/capture_me')
-const schedule_routes = require('./routes/schedule')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/api/captureme', captureme_routes)
-app.use('/api/schedule', schedule_routes)
-
+app.use('/api/v2/captureme', captureme_routes)
 
 app.listen(PORT, () => { console.log(`litsening to port ${PORT}`) })
 
