@@ -1,9 +1,5 @@
 ##TODO
-  what's remaining that essential? 
-    first of all look into how the scheduling or delayed jobs work in node
-    then according to that modify the user input that you're taking from the user
-    then store that data to db for later refrences
-    finally get a good looking email template
-    finally for demonstraion, a UI would be great!!
-    
-        AND THATS IT~~~~
+- make another route for scheduling the screenshots
+  1: take user inputs like email, url, and when they need to recieve those ss's
+  2: first of all implement nodemailer and send those screenshots without scheduling
+  3: after everything above is done, then you can schedule those tasks
