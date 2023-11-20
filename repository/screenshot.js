@@ -50,5 +50,4 @@ async function screenshot(url, device) {
     }
 }
 
-
 module.exports = screenshot

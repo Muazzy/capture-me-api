@@ -12,5 +12,4 @@ async function screenshot(req, res, next) {
     }
 }
 
-
 module.exports = screenshot

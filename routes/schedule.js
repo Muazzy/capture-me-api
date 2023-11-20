@@ -1,20 +1,13 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const router = express.Router()
-
-//MIDDLEWARE
 const validatation_middleware = require('../middleware/validate_params')
-//MODEL
 const { ScheduledScreenshot, validate } = require('../model/scheduled_screenshot')
-//SERVICE 
 const schedule = require('../service/schedule')
-//UTILS
 const createCron = require('../utils/create_cron')
 const deleteCron = require('../utils/delete_cron')
-
 const sendEmail = require('../repository/email')
 const { welcomeEmailMailOptions } = require('../constants/mail_options')
-
 
 
 router.post('/', [validatation_middleware(validate)], async (req, res) => {
@@ -27,13 +20,11 @@ router.post('/', [validatation_middleware(validate)], async (req, res) => {
         })
 
         createCron(scheduled_ss._id.toString(), scheduled_ss.cron, schedule, scheduled_ss)
-        //TODO: send a confirmation or notification kinda email
-
         await scheduled_ss.save()
 
-        sendEmail(welcomeEmailMailOptions(scheduled_ss))
+        sendEmail(welcomeEmailMailOptions(scheduled_ss)) //send confirmation email.
         res.send({
-            "message": `you will recieve the scheduled screenshot reports on ${req.body.email} on ${req.body.cron}`,
+            "message": `you will recieve the scheduled screenshot reports on ${req.body.email}`,
         })
     }
     catch (e) {

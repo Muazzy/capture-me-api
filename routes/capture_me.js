@@ -1,13 +1,9 @@
 const express = require('express')
 const router = express.Router()
-
-//MIDDLEWARE
 const validatation_middleware = require('../middleware/validate_params')
 const screenshot_middleware = require('../middleware/screenshot')
 const cloud_storage_middleware = require('../middleware/store')
 const fileNameMiddleware = require('../middleware/filename')
-
-//UTILITY 
 const validate_params = require('../utils/validate_params')
 
 

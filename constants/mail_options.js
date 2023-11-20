@@ -1,7 +1,6 @@
 const { getWelcomEmailTemplate, getReportEmailTemplate } = require('./email_templates')
 const cronstrue = require('cronstrue')
 
-
 function welcomeEmailMailOptions(scheduled_screenshot) {
     const cronString = cronstrue.toString(scheduled_screenshot.cron)
     return {
@@ -12,11 +11,8 @@ function welcomeEmailMailOptions(scheduled_screenshot) {
     }
 }
 
-
-
 function reportEmailMailOptions(scheduled_screenshot, imageBuffer, fileName) {
     const cronString = cronstrue.toString(scheduled_screenshot.cron)
-
     return {
         from: process.env.MAIL_USERNAME,
         to: scheduled_screenshot.email,
@@ -30,7 +26,5 @@ function reportEmailMailOptions(scheduled_screenshot, imageBuffer, fileName) {
         ]
     }
 }
-
-
 
 module.exports = { welcomeEmailMailOptions, reportEmailMailOptions }

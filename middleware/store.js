@@ -35,7 +35,6 @@ async function storeScreenshot(req, res, next) {
         console.log(e)
         return res.status(500).send('server error')
     }
-
 }
 
 
