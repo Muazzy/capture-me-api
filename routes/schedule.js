@@ -1,22 +1,79 @@
+const mongoose = require('mongoose')
 const express = require('express')
 const router = express.Router()
 
 //MIDDLEWARE
 const validatation_middleware = require('../middleware/validate_params')
-const screenshot_middleware = require('../middleware/screenshot')
-const email_middleware = require('../middleware/email')
-const filename_middleware = require('../middleware/filename')
+//MODEL
+const { ScheduledScreenshot, validate } = require('../model/scheduled_screenshot')
+//SERVICE 
+const schedule = require('../service/schedule')
+//UTILS
+const createCron = require('../utils/create_cron')
+const deleteCron = require('../utils/delete_cron')
 
-//UTILITY 
-const validateDelayedRouteParams = require('../utils/validate_delayed_route_params')
+const sendEmail = require('../repository/email')
+const { welcomeEmailMailOptions } = require('../constants/mail_options')
 
 
 
-router.post('/', [validatation_middleware(validateDelayedRouteParams), screenshot_middleware, filename_middleware, email_middleware], (req, res) => {
-    res.send({
-        'message': `Screenshot report sent to ${req.body.userEmail}`,
-        'time': new Date().toISOString()
-    })
+router.post('/', [validatation_middleware(validate)], async (req, res) => {
+    try {
+        const scheduled_ss = new ScheduledScreenshot({
+            cron: req.body.cron,
+            email: req.body.email,
+            url: req.body.url,
+            device: req.body.device,
+        })
+
+        createCron(scheduled_ss._id.toString(), scheduled_ss.cron, schedule, scheduled_ss)
+        //TODO: send a confirmation or notification kinda email
+
+        await scheduled_ss.save()
+
+        sendEmail(welcomeEmailMailOptions(scheduled_ss))
+        res.send({
+            "message": `you will recieve the scheduled screenshot reports on ${req.body.email} on ${req.body.cron}`,
+        })
+    }
+    catch (e) {
+        console.log(e)
+        res.status(500).send('something went wrong on the server')
+    }
+})
+
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const id = req.params.id
+
+        console.log(`${id} in delete req in schedule route`)
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).send('invalid id, no scheduled screenshot found')
+        }
+
+        const scheduled_ss = await ScheduledScreenshot.findById(id)
+        if (!scheduled_ss) return res.status(404).send('scheduled screenshot not found')
+
+        const deleted = deleteCron(id)
+
+        console.log(`deleted is:`)
+        console.log(deleted)
+
+        if (!deleted) return res.status(500).send('something went wrong on the server')
+
+        scheduled_ss.set({ running: false })
+        await scheduled_ss.save()
+
+        res.send({
+            "message": `you will not recieve screenshot reports of this url:${scheduled_ss.url} anymore`,
+        })
+    }
+    catch (e) {
+        console.log(e)
+        res.status(500).send('something went wrong on the server')
+    }
 })
 
 module.exports = router
