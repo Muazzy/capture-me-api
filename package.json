@@ -10,9 +10,14 @@
   "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.431.0",
+    "cron": "^3.1.3",
+    "cron-validator": "^1.3.1",
+    "cronstrue": "^2.44.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "joi": "^17.9.2",
+    "mongoose": "^7.6.3",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.6",
     "puppeteer": "^20.8.0",
     "uuid": "^9.0.0"
